@@ -11,11 +11,17 @@ def test_get_projects_list():
     assert count > 0
 
 
+def test_negative_get_projects_list():
+    You_gile = YouGile('https://ru.yougile.com')
+    res = You_gile.get_project_list(token='567')
+    status = res.status_code
+    assert status == 401
+
+
 def test_add_projects():
     You_gile = YouGile('https://ru.yougile.com')
     res_before = You_gile.get_project_list()
     json = res_before.json()
-    print(json)
     count_before = json['paging']['count']
     res_add = You_gile.add_project('Mos.ru')
     status = res_add.status_code
@@ -26,6 +32,21 @@ def test_add_projects():
     assert status == 201
     assert count_after-count_before == 1
     assert json_add['id'] is not None
+
+
+def test_negative_add_project():
+    You_gile = YouGile('https://ru.yougile.com')
+    res_before = You_gile.get_project_list()
+    json = res_before.json()
+    count_before = json['paging']['count']
+    res_add = You_gile.add_project('Mos.ru', token='123')
+    status = res_add.status_code
+    json_add = res_add.json()
+    res_after = You_gile.get_project_list()
+    json_after = res_after.json()
+    count_after = json_after['paging']['count']
+    assert status == 401
+    assert count_after-count_before == 0
 
 
 def test_get_project_with_id():
@@ -40,6 +61,17 @@ def test_get_project_with_id():
     assert status == 200
     assert json['id'] == new_id
     assert json['title'] == new_title
+
+
+def test_negative_get_project_with_id():
+    You_gile = YouGile('https://ru.yougile.com')
+    new_title = 'SkyPro'
+    new_project = You_gile.add_project(new_title)
+    json = new_project.json()
+    new_id = json['id']
+    desired_project = You_gile.get_project_with_id('123')
+    status = desired_project.status_code
+    assert status == 404
 
 
 def test_change_project_title():
@@ -57,3 +89,13 @@ def test_change_project_title():
     assert modified_project_status == 200
     assert modified_project_json['id'] == new_id
     assert desired_project_json['title'] == new_title
+
+
+def test_negative_change_project_title():
+    You_gile = YouGile('https://ru.yougile.com')
+    add_title = 'SkyPro'
+    You_gile.add_project(add_title)
+    new_title = 'Python'
+    modified_project = You_gile.change_project_title('123', new_title)
+    modified_project_status = modified_project.status_code
+    assert modified_project_status == 404
