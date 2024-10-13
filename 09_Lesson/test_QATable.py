@@ -36,7 +36,7 @@ def test_add_user():
 
 
 def test_update_user():
-    new_user_id = 855
+    new_user_id = 446
     new_user_email = 'user2@mail.ru'
     user_subject_id = 3
     db = create_engine(db_connection_string)
@@ -72,7 +72,7 @@ def test_update_user():
 
 
 def test_delete_user():
-    new_user_id = 855
+    new_user_id = 466
     new_user_email = 'user3@mail.ru'
     user_subject_id = 2
     db = create_engine(db_connection_string)
